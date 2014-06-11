@@ -6,6 +6,6 @@ public interface AccountOperations
     void deposit(int accountId, int creditAmount);
     void placeOrder(int accountId, int orderId, int amount);
     void cancelOrder(int accountId, int orderId);
-
     void placeWholesaleOrder();
+    void onWholesaleOrder(int quantity);
 }

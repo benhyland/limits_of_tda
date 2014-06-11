@@ -11,12 +11,17 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
 
     private final Map<Integer, Integer> balances;
     private final Map<Integer, Map<Integer,Integer>> orders;
+    private final Order firstOrder;
+    private Order lastOrder;
 
     public BalancesAndOrders(OutboundEvents events)
     {
         this.events = events;
         this.balances = new HashMap<Integer, Integer>();
         this.orders = new HashMap<Integer, Map<Integer, Integer>>();
+        firstOrder = new OrderCell(events, Integer.MIN_VALUE, Integer.MIN_VALUE, 0, null);
+        firstOrder.setPrevious(firstOrder);
+        lastOrder = firstOrder;
     }
 
     @Override
@@ -47,6 +52,7 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
         if(accountOrders.containsKey(orderId)) {
             final int quantity = accountOrders.remove(orderId);
             orders.put(accountId, accountOrders);
+            firstOrder.remove(orderId);
             events.orderCancelled(accountId, orderId);
             deposit(accountId, cost(quantity));
         }
@@ -58,6 +64,11 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
     @Override
     public void placeWholesaleOrder() {
         events.onWholesaleOrder(totalOrderQuantity());
+    }
+
+    @Override
+    public void onWholesaleOrder(int quantity) {
+        firstOrder.fill(quantity);
     }
 
     private int cost(int quantity) {
@@ -84,6 +95,9 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
         else {
             accountOrders.put(orderId, quantity);
             orders.put(accountId, accountOrders);
+            final OrderCell newOrder = new OrderCell(events, accountId, orderId, quantity, lastOrder);
+            lastOrder.setNext(newOrder);
+            lastOrder = newOrder;
             events.orderPlaced(accountId, quantity);
         }
     }

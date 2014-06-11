@@ -29,11 +29,13 @@ public class BreadShop implements AccountOperations {
         accounts.cancelOrder(accountId, orderId);
     }
 
+    @Override
     public void placeWholesaleOrder() {
         accounts.placeWholesaleOrder();
     }
 
+    @Override
     public void onWholesaleOrder(int quantity) {
-        throw new UnsupportedOperationException("Implement me in Objective B");
+        accounts.onWholesaleOrder(quantity);
     }
 }

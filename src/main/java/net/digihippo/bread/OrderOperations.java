@@ -6,4 +6,5 @@ public interface OrderOperations {
     void cancelOrder(int accountId, int orderId);
 
     void placeWholesaleOrder();
+    void onWholesaleOrder(int quantity);
 }
