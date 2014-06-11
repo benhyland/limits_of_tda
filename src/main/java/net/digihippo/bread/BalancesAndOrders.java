@@ -55,6 +55,11 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
         }
     }
 
+    @Override
+    public void placeWholesaleOrder() {
+        events.onWholesaleOrder(totalOrderQuantity());
+    }
+
     private int cost(int quantity) {
         return quantity * PRICE_OF_BREAD;
     }
@@ -81,5 +86,15 @@ public class BalancesAndOrders implements BalanceAndOrderOperations {
             orders.put(accountId, accountOrders);
             events.orderPlaced(accountId, quantity);
         }
+    }
+
+    private int totalOrderQuantity() {
+        int quantity = 0;
+        for(final Map<Integer, Integer> accountOrders : orders.values()) {
+            for(final int q : accountOrders.values()) {
+                quantity += q;
+            }
+        }
+        return quantity;
     }
 }

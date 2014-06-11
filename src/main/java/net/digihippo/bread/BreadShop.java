@@ -1,17 +1,11 @@
 package net.digihippo.bread;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class BreadShop implements AccountOperations {
     public static int PRICE_OF_BREAD = 12;
-
-    private final OutboundEvents events;
 
     private final AccountOperations accounts;
 
     public BreadShop(OutboundEvents events) {
-        this.events = events;
         this.accounts = new Accounts(new BalancesAndOrders(events), events);
     }
 
@@ -36,7 +30,7 @@ public class BreadShop implements AccountOperations {
     }
 
     public void placeWholesaleOrder() {
-        throw new UnsupportedOperationException("Implement me in Objective A");
+        accounts.placeWholesaleOrder();
     }
 
     public void onWholesaleOrder(int quantity) {

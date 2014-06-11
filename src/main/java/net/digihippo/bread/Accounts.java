@@ -57,6 +57,11 @@ public class Accounts implements AccountOperations {
         }
     }
 
+    @Override
+    public void placeWholesaleOrder() {
+        balancesAndOrders.placeWholesaleOrder();
+    }
+
     private boolean accountExists(int accountId) {
         return accountIds.contains(accountId);
     }
