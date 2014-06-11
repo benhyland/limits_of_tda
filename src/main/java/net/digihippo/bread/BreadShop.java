@@ -3,7 +3,7 @@ package net.digihippo.bread;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BreadShop {
+public class BreadShop implements AccountOperations {
     public static int PRICE_OF_BREAD = 12;
 
     private final OutboundEvents events;
@@ -14,11 +14,13 @@ public class BreadShop {
         this.events = events;
     }
 
+    @Override
     public void createAccount(int id) {
         bank.put(id, new Account());
         events.accountCreatedSuccessfully(id);
     }
 
+    @Override
     public void deposit(int accountId, int creditAmount) {
         Account account = bank.get(accountId);
         if (account != null) {
@@ -29,6 +31,7 @@ public class BreadShop {
         }
     }
 
+    @Override
     public void placeOrder(int accountId, int orderId, int amount) {
         Account account = bank.get(accountId);
         if (account != null) {
@@ -46,6 +49,7 @@ public class BreadShop {
         }
     }
 
+    @Override
     public void cancelOrder(int accountId, int orderId) {
         Account account = bank.get(accountId);
         if (account == null)
