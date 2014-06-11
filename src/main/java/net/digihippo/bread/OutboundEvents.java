@@ -20,4 +20,7 @@ public interface OutboundEvents {
 
     // For Objective B
     void orderFilled(int accountId, int orderId, int quantity);
+
+    // additional error conditions
+    void accountAlreadyExists(int accountId);
 }

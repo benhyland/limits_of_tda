@@ -7,67 +7,32 @@ public class BreadShop implements AccountOperations {
     public static int PRICE_OF_BREAD = 12;
 
     private final OutboundEvents events;
-    final Map<Integer, Account> bank = new HashMap<Integer, Account>();
 
+    private final AccountOperations accounts;
 
     public BreadShop(OutboundEvents events) {
         this.events = events;
+        this.accounts = new Accounts(new BalancesAndOrders(events), events);
     }
 
     @Override
     public void createAccount(int id) {
-        bank.put(id, new Account());
-        events.accountCreatedSuccessfully(id);
+        accounts.createAccount(id);
     }
 
     @Override
     public void deposit(int accountId, int creditAmount) {
-        Account account = bank.get(accountId);
-        if (account != null) {
-            final int newBalance = account.deposit(creditAmount);
-            events.newAccountBalance(accountId, newBalance);
-        } else {
-            events.accountNotFound(accountId);
-        }
+        accounts.deposit(accountId, creditAmount);
     }
 
     @Override
     public void placeOrder(int accountId, int orderId, int amount) {
-        Account account = bank.get(accountId);
-        if (account != null) {
-            int cost = amount * PRICE_OF_BREAD;
-            if (account.getBalance() >= cost) {
-                account.addOrder(orderId, amount);
-                int newBalance = account.deposit(-cost);
-                events.orderPlaced(accountId, amount);
-                events.newAccountBalance(accountId, newBalance);
-            } else {
-                events.orderRejected(accountId);
-            }
-        } else {
-            events.accountNotFound(accountId);
-        }
+        accounts.placeOrder(accountId, orderId, amount);
     }
 
     @Override
     public void cancelOrder(int accountId, int orderId) {
-        Account account = bank.get(accountId);
-        if (account == null)
-        {
-            events.accountNotFound(accountId);
-            return;
-        }
-
-        Integer cancelledQuantity = account.cancelOrder(orderId);
-        if (cancelledQuantity == null)
-        {
-            events.orderNotFound(accountId, orderId);
-            return;
-        }
-
-        int newBalance = account.deposit(cancelledQuantity * PRICE_OF_BREAD);
-        events.orderCancelled(accountId, orderId);
-        events.newAccountBalance(accountId, newBalance);
+        accounts.cancelOrder(accountId, orderId);
     }
 
     public void placeWholesaleOrder() {
